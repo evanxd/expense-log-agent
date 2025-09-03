@@ -71,7 +71,7 @@ async function addExpenseWithRetry(
     result = await agent.run(userPrompt(task, sender, groupMembers, ledgerId));
     const toolOutput = result.at(-2);
     if (toolOutput?.getType().toString() === "tool") {
-      const response = JSON.parse(toolOutput.text!);
+      const response = JSON.parse(toolOutput.text);
       if (response.message === "Expense added successfully.") {
         expenseAdded = true;
       }
