@@ -1,9 +1,9 @@
 import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
+import { BaseMessage } from "@langchain/core/messages";
 import { SwiftAgent } from "swift-agent";
 import { systemPrompt, userPrompt } from "./prompts.js"
 import { addResult, generateClient, waitForTasks } from "./redis-helper.js";
 import dotenv from "dotenv";
-import { BaseMessage } from "@langchain/core/messages";
 
 dotenv.config();
 
