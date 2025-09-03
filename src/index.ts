@@ -67,7 +67,7 @@ async function addExpenseWithRetry(
   let result: BaseMessage[] = [];
   let attempts = 0;
   let expenseAdded = false;
-  while (attempts < maxAttempts && !expenseAdded) {
+  do {
     result = await agent.run(userPrompt(task, sender, groupMembers, ledgerId));
     const toolOutput = result.at(-2);
     if (toolOutput?.getType().toString() === "tool") {
@@ -77,6 +77,6 @@ async function addExpenseWithRetry(
       }
     }
     attempts++;
-  }
+  } while (attempts < maxAttempts && !expenseAdded);
   return result;
 }
