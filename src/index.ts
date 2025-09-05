@@ -1,7 +1,7 @@
 import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
 import { SwiftAgent } from "swift-agent";
 import { systemPrompt } from "./prompts.js"
-import { addExpenseWithRetry, addResult, generateClient, getRequests } from "./redis-helper.js";
+import { runInstruction, addResult, generateClient, getRequests } from "./redis-helper.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -36,7 +36,7 @@ async function main() {
     const { requestId, instruction, sender, groupMembers, ledgerId, channelId } = request.message;
 
     try {
-      const messages = await addExpenseWithRetry(agent, instruction, sender, groupMembers, ledgerId);
+      const messages = await runInstruction(agent, instruction, sender, groupMembers, ledgerId);
       const result = messages.at(-1)?.text;
       if (result) {
         await addResult(client, { message: { result, channelId, requestId } });

@@ -43,7 +43,7 @@ interface TaskResultMessage {
  * @returns A promise that resolves to an array of BaseMessage representing the agent's execution result.
  * @throws If the expense cannot be added after the maximum number of attempts.
  */
-export async function addExpenseWithRetry(
+export async function runInstruction(
   agent: SwiftAgent,
   instruction: string,
   sender: string,
@@ -58,7 +58,9 @@ export async function addExpenseWithRetry(
     const toolMessage = messages.at(-2);
     if (toolMessage?.getType() === "tool") {
       const response = JSON.parse(toolMessage.text);
-      if (response.message === "Expense added successfully.") {
+      // When adding an expense, ensure the agent provides a complete response,
+      // not just the expense categories.
+      if (response.message !== "Expense categories retrieved successfully.") {
         return messages;
       }
     }
