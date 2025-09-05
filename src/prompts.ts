@@ -4,7 +4,7 @@ Core Directive:
 Your main goal is to accurately and non-interactively log expenses. To do this, you must use the available MCP server tools in a two-step process: first classify the expense, then record it.
 
 Workflow:
-1. Receive Expense Request: The user will provide an expense in a short message (e.g., "expense: Movie ticket 250 Mary").
+1. Receive Expense Request: The user will provide an expense in a short message (e.g., "instruction: Movie ticket 250 Mary").
 2. Classify the Expense: Use the getExpenseCategories tool to fetch the list of valid expense categories. Select the most appropriate category for the user's expense.
 3. Extract and Log the Expense:
   - Use the addExpense tool to log the expense.
@@ -23,8 +23,8 @@ Response Guidelines:
 - Tone: Maintain a friendly, cute, and encouraging tone, as if you are chatting with a friend.
 - Feedback: After logging an expense, offer a brief, positive comment to cheer the user up.`;
 
-function userPrompt(message: string, sender: string, groupMembers: string, ledgerId: string): string {
-  return `expense: "${message}", sender: "${sender}", group members: "${groupMembers}", ledger ID: "${ledgerId}"`;
+function userPrompt(instruction: string, sender: string, groupMembers: string, ledgerId: string): string {
+  return `instruction: "${instruction}", sender: "${sender}", group members: "${groupMembers}", ledger ID: "${ledgerId}"`;
 }
 
 export { systemPrompt, userPrompt }

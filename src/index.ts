@@ -1,8 +1,7 @@
 import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
-import { BaseMessage } from "@langchain/core/messages";
 import { SwiftAgent } from "swift-agent";
-import { systemPrompt, userPrompt } from "./prompts.js"
-import { addResult, generateClient, waitForTasks } from "./redis-helper.js";
+import { systemPrompt } from "./prompts.js"
+import { addExpenseWithRetry, addResult, generateClient, getRequests } from "./redis-helper.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -12,71 +11,50 @@ const REDIS_OPTIONS = {
   password: process.env.REDIS_PASSWORD,
   socket: {
     host: process.env.REDIS_HOST,
-    port: Number(process.env.REDIS_PORT),
+    port: Number(process.env.REDIS_PORT)
   }
 }
-const redisClient = await generateClient(REDIS_OPTIONS);
 
 const llm = new Model({
-  model: "gemini-2.5-flash",
-  apiKey: process.env.GEMINI_API_KEY,
+  model: process.env.MODEL_NAME || "gemini-2.5-flash",
+  apiKey: process.env.GEMINI_API_KEY
 });
 const mcp = {
   mcpServers: {
     "expense-log-mcp": {
       command: "npx",
-      args: ["-y", "expense-log-mcp@1.0.9"],
-      env: { DATABASE_URL: process.env.DATABASE_URL },
-    },
-  },
+      args: ["-y", `expense-log-mcp@${process.env.EXPENSE_LOG_MCP_VERSION || '0.0.5'}`],
+      env: { DATABASE_URL: process.env.DATABASE_URL }
+    }
+  }
 };
 const agent = new SwiftAgent(llm, { mcp, systemPrompt });
 
-await waitForTasks(redisClient, async (message) => {
-    const { taskId, task, sender, groupMembers, ledgerId, channelId } = message;
+async function main() {
+  const client = await generateClient(REDIS_OPTIONS);
+  for await (const request of getRequests(client)) {
+    const { requestId, instruction, sender, groupMembers, ledgerId, channelId } = request.message;
+
     try {
-      // Retry adding expense up to 3 times, as the agent might first ask for categories.
-      const result = await addExpenseWithRetry(agent, task, sender, groupMembers, ledgerId);
-      const text = result.at(-1)?.text;
-      if (text) {
-        await addResult(redisClient, {
-          result: text, channelId, taskId,
-        });
+      const messages = await addExpenseWithRetry(agent, instruction, sender, groupMembers, ledgerId);
+      const result = messages.at(-1)?.text;
+      if (result) {
+        await addResult(client, { message: { result, channelId, requestId } });
       } else {
         throw new Error("The agent's final response did not contain any text.");
       }
-    } catch (e: unknown) {
-      let result = "An unexpected error occurred while processing your request.";
+    } catch (e) {
+      let errorMessage = "An unknown error occurred.";
       if (e instanceof Error) {
-        result = `Error: ${e.message}`;
+        errorMessage = e.message;
       }
-      await addResult(redisClient, { result, channelId, taskId });
+      await addResult(client, { message: { result: errorMessage, channelId, requestId } });
     } finally {
       agent.resetMessages();
     }
-});
-
-async function addExpenseWithRetry(
-  agent: SwiftAgent,
-  task: string,
-  sender: string,
-  groupMembers: string,
-  ledgerId: string,
-  maxAttempts: number = 3,
-): Promise<BaseMessage[]> {
-  let result: BaseMessage[] = [];
-  let attempts = 0;
-  let expenseAdded = false;
-  do {
-    result = await agent.run(userPrompt(task, sender, groupMembers, ledgerId));
-    const toolOutput = result.at(-2);
-    if (toolOutput?.getType().toString() === "tool") {
-      const response = JSON.parse(toolOutput.text);
-      if (response.message === "Expense added successfully.") {
-        expenseAdded = true;
-      }
-    }
-    attempts++;
-  } while (attempts < maxAttempts && !expenseAdded);
-  return result;
+  }
 }
+
+main().catch(e => {
+  console.error("Unhandled error in main function:", e);
+});

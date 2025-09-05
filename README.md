@@ -32,12 +32,16 @@ The agent requires the following variables in the `.env` file:
 
 ```
 GEMINI_API_KEY="Your-API-Key"
+MODEL_NAME="gemini-2.5-pro"
 REDIS_HOST="Your-Redis-Host"
 REDIS_PORT="Your-Redis-Port"
 REDIS_USERNAME="Your-Redis-Username"
 REDIS_PASSWORD="Your-Redis-Password"
 DATABASE_URL="Your-Database-URL"
+EXPENSE_LOG_MCP_VERSION="1.0.9"
 ```
+
+The agent uses the `gemini-2.5-flash` model by default if `MODEL_NAME` is not assigned.
 
 The agent connects to a Redis server to receive tasks and post results. The Redis connection details are loaded from the `.env` file.
 
