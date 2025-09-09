@@ -18,7 +18,7 @@ interface TaskRequestMessage {
     groupMembers: string;
     ledgerId: string;
     channelId: string;
-    messageId?: string;
+    messageId: string;
   };
 }
 
@@ -31,17 +31,17 @@ interface TaskResultMessage {
 }
 
 /**
- * Attempts to add an expense by running a SwiftAgent, retrying on failure.
- * The retry logic handles cases where the agent first asks for expense categories.
+ * Runs an instruction using a SwiftAgent, with built-in retry logic for specific scenarios.
  *
  * @param agent The SwiftAgent instance to run.
  * @param instruction The instruction for the agent to execute.
  * @param sender The user who initiated the request.
  * @param groupMembers A JSON string array of group members.
- * @param ledgerId The ID of the ledger to add the expense to.
+ * @param ledgerId The ID of the ledger associated with the instruction.
+ * @param messageIdId The ID of the message related to the instruction.
  * @param maxAttempts The maximum number of attempts to try. Defaults to 3.
  * @returns A promise that resolves to an array of BaseMessage representing the agent's execution result.
- * @throws If the expense cannot be added after the maximum number of attempts.
+ * @throws If the instruction fails to execute successfully after the maximum number of attempts.
  */
 export async function runInstruction(
   agent: SwiftAgent,
@@ -49,12 +49,13 @@ export async function runInstruction(
   sender: string,
   groupMembers: string,
   ledgerId: string,
+  messageIdId: string,
   maxAttempts: number = 3,
 ): Promise<BaseMessage[]> {
   let messages: BaseMessage[] = [];
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    messages = await agent.run(userPrompt(instruction, sender, groupMembers, ledgerId));
+    messages = await agent.run(userPrompt(instruction, sender, groupMembers, ledgerId, messageIdId));
     const toolMessage = messages.at(-2);
     if (toolMessage?.getType() === "tool") {
       const response = JSON.parse(toolMessage.text);

@@ -23,7 +23,7 @@ const mcp = {
   mcpServers: {
     "expense-log-mcp": {
       command: "npx",
-      args: ["-y", `expense-log-mcp@${process.env.EXPENSE_LOG_MCP_VERSION || '0.0.5'}`],
+      args: ["-y", `expense-log-mcp@${process.env.EXPENSE_LOG_MCP_VERSION}`],
       env: { DATABASE_URL: process.env.DATABASE_URL }
     }
   }
@@ -33,10 +33,10 @@ const agent = new SwiftAgent(llm, { mcp, systemPrompt });
 async function main() {
   const client = await generateClient(REDIS_OPTIONS);
   for await (const request of getRequests(client)) {
-    const { requestId, instruction, sender, groupMembers, ledgerId, channelId } = request.message;
+    const { requestId, instruction, sender, groupMembers, ledgerId, channelId, messageId } = request.message;
 
     try {
-      const messages = await runInstruction(agent, instruction, sender, groupMembers, ledgerId);
+      const messages = await runInstruction(agent, instruction, sender, groupMembers, ledgerId, messageId);
       const result = messages.at(-1)?.text;
       if (result) {
         await addResult(client, { message: { result, channelId, requestId } });
