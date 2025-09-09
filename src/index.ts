@@ -39,7 +39,7 @@ async function main() {
       const messages = await runInstruction(agent, instruction, sender, groupMembers, ledgerId, messageId);
       const result = messages.at(-1)?.text;
       if (result) {
-        await addResult(client, { message: { result, channelId, requestId } });
+        await addResult(client, { message: { result, channelId, messageId, requestId } });
       } else {
         throw new Error("The agent's final response did not contain any text.");
       }
@@ -48,7 +48,7 @@ async function main() {
       if (e instanceof Error) {
         errorMessage = e.message;
       }
-      await addResult(client, { message: { result: errorMessage, channelId, requestId } });
+      await addResult(client, { message: { result: errorMessage, channelId, messageId, requestId } });
     } finally {
       agent.resetMessages();
     }
