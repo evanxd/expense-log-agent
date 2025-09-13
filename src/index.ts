@@ -1,19 +1,19 @@
 import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
 import { SwiftAgent } from "swift-agent";
-import { systemPrompt } from "./prompts.js"
-import { runInstruction, addResult, generateClient, getRequests } from "./redis-helper.js";
 import dotenv from "dotenv";
 
-dotenv.config();
+import { systemPrompt } from "./prompts.js"
+import {
+  addResultToStream,
+  createRedisClient,
+  yieldRequestsFromStream,
+} from "./redis.js";
+import {
+  runInstruction,
+  to,
+} from "./utils.js"
 
-const REDIS_OPTIONS = {
-  username: process.env.REDIS_USERNAME,
-  password: process.env.REDIS_PASSWORD,
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: Number(process.env.REDIS_PORT)
-  }
-}
+dotenv.config();
 
 const llm = new Model({
   model: process.env.MODEL_NAME || "gemini-2.5-flash",
@@ -31,30 +31,24 @@ const mcp = {
 const agent = new SwiftAgent(llm, { mcp, systemPrompt });
 
 async function main() {
-  const client = await generateClient(REDIS_OPTIONS);
-  for await (const request of getRequests(client)) {
-    const { requestId, instruction, sender, groupMembers, ledgerId, channelId, messageId } = request.message;
+  const client = await createRedisClient();
 
-    try {
-      const messages = await runInstruction(agent, instruction, sender, groupMembers, ledgerId, messageId);
-      const result = messages.at(-1)?.text;
-      if (result) {
-        await addResult(client, { message: { result, channelId, messageId, requestId } });
-      } else {
-        throw new Error("The agent's final response did not contain any text.");
-      }
-    } catch (e) {
+  for await (const request of yieldRequestsFromStream(client)) {
+    const { requestId, instruction, sender, groupMembers, ledgerId, channelId, messageId } = request.message;
+    const [error, messages] = await to(runInstruction(agent, instruction, sender, groupMembers, ledgerId, messageId));
+
+    if (error) {
       let errorMessage = "An unknown error occurred.";
-      if (e instanceof Error) {
-        errorMessage = e.message;
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
-      await addResult(client, { message: { result: errorMessage, channelId, messageId, requestId } });
-    } finally {
-      agent.resetMessages();
+      await addResultToStream(client, { message: { result: errorMessage, channelId, messageId, requestId } });
+    } else {
+      const result = messages.at(-1)?.text;
+      await addResultToStream(client, { message: { result, channelId, messageId, requestId } });
     }
+    agent.resetMessages();
   }
 }
 
-main().catch(e => {
-  console.error("Unhandled error in main function:", e);
-});
+main().catch(e => { console.error("Unhandled error in main function:", e); });
