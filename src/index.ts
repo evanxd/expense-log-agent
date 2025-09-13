@@ -2,7 +2,8 @@ import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
 import { SwiftAgent } from "swift-agent";
 import dotenv from "dotenv";
 
-import { systemPrompt } from "./prompts.js"
+import { systemPrompt } from "./prompts.js";
+import { startServer } from "./server.js";
 import {
   addResultToStream,
   createRedisClient,
@@ -11,7 +12,7 @@ import {
 import {
   runInstruction,
   to,
-} from "./utils.js"
+} from "./utils.js";
 
 dotenv.config();
 
@@ -51,4 +52,5 @@ async function main() {
   }
 }
 
+startServer(Number(process.env.PORT));
 main().catch(e => { console.error("Unhandled error in main function:", e); });

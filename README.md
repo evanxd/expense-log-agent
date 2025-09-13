@@ -35,6 +35,7 @@ DATABASE_URL="Your-Database-URL"
 EXPENSE_LOG_MCP_VERSION="1.0.9"
 GEMINI_API_KEY="Your-API-Key"
 MODEL_NAME="gemini-2.5-pro"
+PORT="3000"
 REDIS_HOST="Your-Redis-Host"
 REDIS_PASSWORD="Your-Redis-Password"
 REDIS_PORT="Your-Redis-Port"
@@ -45,6 +46,7 @@ STREAM_RESULTS="discord:results"
 
 The agent's configuration is managed through environment variables:
 
+- **Server:** The `PORT` variable specifies the port on which the server will listen.
 - **Model:** Uses `gemini-2.5-flash` by default, but can be specified with the `MODEL_NAME` variable.
 - **Redis:** Connects to a Redis server for task queuing. Connection details (`REDIS_HOST`, `REDIS_PORT`, etc.) and stream names (`STREAM_REQUESTS`, `STREAM_RESULTS`) are loaded from the `.env` file.
 - **MCP Server:** Connects to an `expense-log-mcp` server. The database connection string is loaded from the `DATABASE_URL` in the `.env` file.

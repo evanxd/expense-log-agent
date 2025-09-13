@@ -18,11 +18,13 @@
   "type": "module",
   "dependencies": {
     "@langchain/google-genai": "^0.2.16",
+    "express": "^5.1.0",
     "redis": "^5.8.2",
     "swift-agent": "^0.1.2"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.1",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",
     "typescript": "^5.9.2"
   }
