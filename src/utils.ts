@@ -1,7 +1,41 @@
+import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
 import { BaseMessage } from "@langchain/core/messages";
 import { SwiftAgent } from "swift-agent";
 
-import { userPrompt } from "./prompts.js"
+import { systemPrompt, userPrompt } from "./prompts.js"
+
+/**
+ * Creates and configures a SwiftAgent instance.
+ *
+ * This function initializes the language model (ChatGoogleGenerativeAI) and
+ * sets up the necessary configuration for the Multi-Content Platform (MCP)
+ * using environment variables. It then bundles it all into a new SwiftAgent.
+ *
+ * @returns A fully configured SwiftAgent instance ready to be used.
+ * @throws If the MCP_SERVER_URL or MCP_SECRET_KEY environment variables are not set.
+ */
+export function createAgent() {
+  const llm = new Model({
+    model: process.env.MODEL_NAME || "gemini-2.5-flash",
+    apiKey: process.env.GEMINI_API_KEY
+  });
+
+  if (process.env.MCP_SERVER_URL) {
+    const mcp = {
+      mcpServers: {
+        "expense-log-mcp": {
+          url: process.env.MCP_SERVER_URL,
+          headers: {
+            authorization: `Bearer ${process.env.MCP_SECRET_KEY}`,
+          },
+        },
+      },
+    };
+    return new SwiftAgent(llm, { mcp, systemPrompt });
+  } else {
+    throw Error("Missing MCP_SERVER_URL or MCP_SECRET_KEY environment variables.");
+  }
+}
 
 /**
  * Runs an instruction using a SwiftAgent, with built-in retry logic for specific scenarios.
