@@ -31,10 +31,10 @@ cp .env.example .env
 The agent requires the following variables in the `.env` file:
 
 ```
-GEMINI_API_KEY="Your-API-Key"
 MCP_SECRET_KEY="Your-MCP-Secret-Key"
 MCP_SERVER_URL="Your-MCP-Server-URL"
-MODEL_NAME="gemini-2.5-pro"
+MODEL_API_KEY="Your-Model-API-Key"
+MODEL_NAME="openai/gpt-oss-20b"
 PORT="3000"
 REDIS_HOST="Your-Redis-Host"
 REDIS_PASSWORD="Your-Redis-Password"
@@ -47,7 +47,7 @@ STREAM_RESULTS="discord:results"
 The agent's configuration is managed through environment variables:
 
 - **Server:** The `PORT` variable specifies the port on which the server will listen.
-- **Model:** Uses `gemini-2.5-flash` by default, but can be specified with the `MODEL_NAME` variable.
+- **Model:** This project uses models hosted on Groq. It uses `openai/gpt-oss-20b` by default, but can be specified with the `MODEL_NAME` variable. The `MODEL_API_KEY` is also required.
 - **Redis:** Connects to a Redis server for task queuing. Connection details (`REDIS_HOST`, `REDIS_PORT`, etc.) and stream names (`STREAM_REQUESTS`, `STREAM_RESULTS`) are loaded from the `.env` file.
 - **MCP Server:** Connects to an `expense-log-mcp` server. The `MCP_SERVER_URL` and `MCP_SECRET_KEY` are loaded from the `.env` file.
 

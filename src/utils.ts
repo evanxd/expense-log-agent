@@ -1,4 +1,4 @@
-import { ChatGoogleGenerativeAI as Model } from "@langchain/google-genai";
+import { ChatGroq as Model } from "@langchain/groq";
 import { BaseMessage } from "@langchain/core/messages";
 import { SwiftAgent } from "swift-agent";
 
@@ -16,8 +16,8 @@ import { systemPrompt, userPrompt } from "./prompts.js"
  */
 export function createAgent() {
   const llm = new Model({
-    model: process.env.MODEL_NAME || "gemini-2.5-flash",
-    apiKey: process.env.GEMINI_API_KEY
+    apiKey: process.env.MODEL_API_KEY,
+    model: process.env.MODEL_NAME || "openai/gpt-oss-20b",
   });
 
   if (process.env.MCP_SERVER_URL) {
