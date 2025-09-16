@@ -77,5 +77,5 @@ export async function runInstruction(
     }
   }
 
-  throw Error("Failed to add expense.");
+  throw Error("Unable to process this instruction. Please try again with a different query or format.");
 }
