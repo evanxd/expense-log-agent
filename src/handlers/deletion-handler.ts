@@ -18,8 +18,8 @@ export class DeletionHandler implements RequestHandler {
   }
 
   async execute(request: RequestMessage): Promise<void> {
-    const getExpenseTool = this.agent.tools?.find((tool) => tool.name === GET_EXPENSE_TOOL_NAME);
-    const deleteExpenseTool = this.agent.tools?.find((tool) => tool.name === DELETE_EXPENSE_TOOL_NAME);
+    const getExpenseTool = (await this.agent.getTools()).find((tool) => tool.name === GET_EXPENSE_TOOL_NAME);
+    const deleteExpenseTool = (await this.agent.getTools()).find((tool) => tool.name === DELETE_EXPENSE_TOOL_NAME);
     if (!getExpenseTool || !deleteExpenseTool) {
       return;
     }

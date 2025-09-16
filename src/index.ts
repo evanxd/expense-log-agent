@@ -11,7 +11,7 @@ import { createHandler } from "./handlers/handler-factory.js";
 dotenv.config();
 
 async function main() {
-  const agent = createAgent();
+  const agent = await createAgent();
   const client = await createRedisClient();
 
   for await (const request of yieldRequestsFromStream(client)) {
