@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
 
-import { startServer } from "./server.js";
+import { startServer } from "./utils/server.js";
 import {
   createRedisClient,
   yieldRequestsFromStream,
-} from "./redis.js";
-import { createAgent } from "./utils.js"
+} from "./utils/redis.js";
+import { createAgent } from "./utils/agent-utils.js"
 import { createHandler } from "./handlers/handler-factory.js";
 
 dotenv.config();

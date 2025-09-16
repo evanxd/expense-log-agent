@@ -1,9 +1,10 @@
 import { RedisClientType } from "redis";
 import { SwiftAgent } from "swift-agent";
 
-import { addResultToStream } from "../redis.js";
-import { runInstruction, to } from "../utils.js";
-import { RequestHandler, RequestMessage } from "../types.js";
+import { addResultToStream } from "../utils/redis.js";
+import { runInstruction } from "../utils/agent-utils.js";
+import { to } from "../utils/async-utils.js";
+import { RequestHandler, RequestMessage } from "../utils/types.js";
 
 export class GeneralCaseHandler implements RequestHandler {
   private agent: SwiftAgent;
