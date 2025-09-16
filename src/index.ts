@@ -5,7 +5,7 @@ import {
   createRedisClient,
   yieldRequestsFromStream,
 } from "./utils/redis.js";
-import { createAgent } from "./utils/agent-utils.js"
+import { createAgent } from "./utils/agent.js"
 import { createHandler } from "./handlers/handler-factory.js";
 
 dotenv.config();
