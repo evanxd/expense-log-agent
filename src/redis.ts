@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from "redis";
+import { RequestMessage, ResultMessage } from "./types.js"
 
 const REDIS_OPTIONS = {
   username: process.env.REDIS_USERNAME,
@@ -12,29 +13,6 @@ const STREAM_REQUESTS = process.env.STREAM_REQUESTS || "discord:requests";
 const STREAM_RESULTS = process.env.STREAM_RESULTS || "discord:results";
 const XREAD_BLOCK_MS = 5000;
 const XREAD_COUNT = 10;
-
-interface RequestMessage {
-  id: string;
-  message: {
-    requestId: string;
-    instruction: string;
-    sender: string;
-    /** A JSON string array of usernames. */
-    groupMembers: string;
-    ledgerId: string;
-    channelId: string;
-    messageId: string;
-  };
-}
-
-interface ResultMessage {
-  message: {
-    result?: string;
-    channelId: string;
-    messageId: string;
-    requestId: string;
-  };
-}
 
 /**
  * Creates and connects a Redis client.
