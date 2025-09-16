@@ -14,29 +14,30 @@ import { systemPrompt, userPrompt } from "./prompts.js"
  * @returns A fully configured SwiftAgent instance ready to be used.
  * @throws If the MCP_SERVER_URL or MCP_SECRET_KEY environment variables are not set.
  */
-export async function createAgent() {
+export async function createAgent(): Promise<SwiftAgent> {
+  if (!process.env.MCP_SERVER_URL || !process.env.MCP_SECRET_KEY) {
+    throw Error("Missing MCP_SERVER_URL or MCP_SECRET_KEY environment variables.");
+  }
+
   const llm = new Model({
     apiKey: process.env.MODEL_API_KEY,
     model: process.env.MODEL_NAME || "openai/gpt-oss-20b",
   });
-
-  if (process.env.MCP_SERVER_URL) {
-    const mcp = {
-      mcpServers: {
-        "expense-log-mcp": {
-          url: process.env.MCP_SERVER_URL,
-          headers: {
-            authorization: `Bearer ${process.env.MCP_SECRET_KEY}`,
-          },
+  const mcp = {
+    mcpServers: {
+      "expense-log-mcp": {
+        url: process.env.MCP_SERVER_URL,
+        headers: {
+          authorization: `Bearer ${process.env.MCP_SECRET_KEY}`,
         },
       },
-    };
-    const agent = new SwiftAgent(llm, { mcp, systemPrompt });
-    await agent.initialize();
-    return agent;
-  } else {
-    throw Error("Missing MCP_SERVER_URL or MCP_SECRET_KEY environment variables.");
-  }
+    },
+  };
+
+  const agent = new SwiftAgent(llm, { mcp, systemPrompt });
+  await agent.initialize();
+
+  return agent;
 }
 
 /**
