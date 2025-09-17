@@ -1,8 +1,9 @@
 import { ChatGroq as Model } from "@langchain/groq";
-import { BaseMessage } from "@langchain/core/messages";
 import { SwiftAgent } from "swift-agent";
 
-import { systemPrompt, userPrompt } from "./prompts.js"
+import { to } from "./async.js";
+import { systemPrompt, userPrompt } from "./prompts.js";
+import { GuardChain } from "../guard-chain/index.js";
 
 /**
  * Creates and configures a SwiftAgent instance.
@@ -61,21 +62,35 @@ export async function runInstruction(
   ledgerId: string,
   messageIdId: string,
   maxAttempts: number = 3,
-): Promise<BaseMessage[]> {
-  let messages: BaseMessage[] = [];
+): Promise<string> {
+  const guard = new GuardChain();
+  let errorToThrow: Error | null = null;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    messages = await agent.run(userPrompt(instruction, sender, groupMembers, ledgerId, messageIdId));
-    const toolMessage = messages.at(-2);
-    if (toolMessage?.getType() === "tool") {
-      const response = JSON.parse(toolMessage.text);
-      // When adding an expense, ensure the agent provides a complete response,
-      // not just the expense categories.
-      if (response.message !== "Expense categories retrieved successfully.") {
-        return messages;
+    try {
+      const [error, messages] = await to(agent.run(userPrompt(
+        instruction, sender, groupMembers, ledgerId, messageIdId))
+      );
+
+      if (error) {
+        errorToThrow = error;
+        continue;
       }
+
+      if (messages && !(await guard.isValid(messages))) {
+        errorToThrow = new Error("This request did not pass the assertion from the guard chain.");
+        continue;
+      }
+
+      const text = messages.at(-1)?.text;
+      if (text) {
+        return text;
+      }
+    } finally {
+      agent.resetMessages();
     }
   }
 
-  throw Error("Unable to process this instruction. Please try again with a different query or format.");
+  console.error(errorToThrow);
+  throw errorToThrow;
 }

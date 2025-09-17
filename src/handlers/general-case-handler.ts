@@ -19,12 +19,7 @@ export class GeneralCaseHandler implements RequestHandler {
     const { requestId, instruction, sender, groupMembers, ledgerId, channelId, messageId } = request.message;
 
     const [error, resultMessage] = await to((async () => {
-      const messages = await runInstruction(this.agent, instruction, sender, groupMembers, ledgerId, messageId);
-      const text = messages.at(-1)?.text;
-      if (!text) {
-        throw Error("Agent response did not contain text.");
-      }
-      return text;
+      return await runInstruction(this.agent, instruction, sender, groupMembers, ledgerId, messageId);
     })());
 
     let result = resultMessage;
