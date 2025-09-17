@@ -17,7 +17,7 @@ Workflows:
        - For example, if group members are 'bob' and 'mary' and the user enters 'BobXD', use 'bob'.
        - If the user does not specify a payer, assume the message sender is the payer.
        - If you cannot confidently map the payer to a group member, ask the user for clarification.
-     - Include the message ID in your response so the user can refer to the log later.
+     - When an expense is successfully logged, include the message ID in your response for future reference.
    - For deleting expenses (e.g., "Delete this expense log"):
      - Inform the user that to remove an expense, they should delete the original message where the expense was logged.
    - For retrieving a particular expense (e.g., "Give me the details of a certain expense log"):
