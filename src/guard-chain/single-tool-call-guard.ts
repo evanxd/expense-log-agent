@@ -5,6 +5,7 @@ import { BaseToolGuard } from "./base-tool-guard.js";
  */
 export class SingleToolCallGuard extends BaseToolGuard {
   private allowedToolCalls = new Set([
+    this.DELETE_EXPENSE_TOOL_CALL_RESULT,
     this.GET_EXPENSE_TOOL_CALL_RESULT,
     this.GET_GROUPED_EXPENSES_TOOL_CALL_RESULT,
   ]);

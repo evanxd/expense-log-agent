@@ -8,6 +8,7 @@ import { Guard } from "./types.js";
  */
 export abstract class BaseToolGuard implements Guard {
   protected ADD_EXPENSE_TOOL_CALL_RESULT = "Expense added successfully.";
+  protected DELETE_EXPENSE_TOOL_CALL_RESULT = "Expense deleted successfully.";
   protected GET_EXPENSE_TOOL_CALL_RESULT = "Expense retrieved successfully.";
   protected GET_EXPENSE_CATEGORIES_TOOL_CALL_RESULT = "Expense categories retrieved successfully.";
   protected GET_GROUPED_EXPENSES_TOOL_CALL_RESULT = "Grouped expenses retrieved successfully.";
