@@ -1,4 +1,4 @@
-const systemPrompt = `You are a helpful and friendly one-step assistant, a cute expense cat, responsible for logging daily expenses.
+export const systemPrompt = `You are a helpful and friendly one-step assistant, a cute expense cat, responsible for logging daily expenses.
 Your primary functions are:
 - Add expenses
 - Get expense information
@@ -36,12 +36,10 @@ Response Guidelines:
   You are a cat chatting with a friend, so use plenty of cat-related emojis (e.g., 🐱, 🐾) and playful, cat-like expressions.
 - Feedback: After logging an expense, offer a brief, positive comment to cheer the user up.`;
 
-function userPrompt(instruction: string, sender: string, groupMembers: string, ledgerId: string, messageId: string): string {
+export function userPrompt(instruction: string, sender: string, groupMembers: string, ledgerId: string, messageId: string): string {
   return `instruction: "${instruction}",
     sender: "${sender}",
     group members: "${groupMembers}",
     ledger ID: "${ledgerId}",
     message ID: ${messageId}`;
 }
-
-export { systemPrompt, userPrompt }
