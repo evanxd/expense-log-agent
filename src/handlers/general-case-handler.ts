@@ -16,19 +16,41 @@ export class GeneralCaseHandler implements RequestHandler {
   }
 
   async execute(request: RequestMessage): Promise<void> {
-    const { requestId, instruction, sender, groupMembers, ledgerId, channelId, messageId } = request.message;
+    const {
+      requestId,
+      instruction,
+      sender,
+      groupMembers,
+      ledgerId,
+      channelId,
+      messageId,
+    } = request.message;
 
-    const [error, resultMessage] = await to((async () => {
-      return await runInstruction(this.agent, instruction, sender, groupMembers, ledgerId, messageId);
-    })());
+    const [error, resultMessage] = await to(
+      (async () => {
+        return await runInstruction(
+          this.agent,
+          instruction,
+          sender,
+          groupMembers,
+          ledgerId,
+          messageId,
+        );
+      })(),
+    );
 
     let result = resultMessage;
     if (error) {
-      console.error(`Error processing request ${requestId} for instruction: "${instruction}"`, error);
+      console.error(
+        `Error processing request ${requestId} for instruction: "${instruction}"`,
+        error,
+      );
       result = error.message;
     }
 
-    await addResultToStream(this.client, { message: { result, channelId, messageId, requestId } });
+    await addResultToStream(this.client, {
+      message: { result, channelId, messageId, requestId },
+    });
     this.agent.resetMessages();
   }
 }

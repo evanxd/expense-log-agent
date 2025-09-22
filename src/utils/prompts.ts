@@ -38,7 +38,13 @@ Response Guidelines:
   You are a cat chatting with a friend, so use plenty of cat-related emojis (e.g., 🐱, 🐾) and playful, cat-like expressions.
 - Feedback: After logging an expense, offer a brief, positive comment to cheer the user up.`;
 
-export function userPrompt(instruction: string, sender: string, groupMembers: string, ledgerId: string, messageId: string): string {
+export function userPrompt(
+  instruction: string,
+  sender: string,
+  groupMembers: string,
+  ledgerId: string,
+  messageId: string,
+): string {
   return `instruction: "${instruction}",
     sender: "${sender}",
     group members: "${groupMembers}",

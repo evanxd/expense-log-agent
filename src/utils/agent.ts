@@ -1,9 +1,10 @@
 import { ChatGroq as Model } from "@langchain/groq";
 import { SwiftAgent } from "swift-agent";
 
+import { GuardChain } from "../guard-chain/index.js";
+
 import { to } from "./async.js";
 import { systemPrompt, userPrompt } from "./prompts.js";
-import { GuardChain } from "../guard-chain/index.js";
 
 /**
  * Creates and configures a SwiftAgent instance.
@@ -17,7 +18,9 @@ import { GuardChain } from "../guard-chain/index.js";
  */
 export async function createAgent(): Promise<SwiftAgent> {
   if (!process.env.MCP_SERVER_URL || !process.env.MCP_SECRET_KEY) {
-    throw Error("Missing MCP_SERVER_URL or MCP_SECRET_KEY environment variables.");
+    throw Error(
+      "Missing MCP_SERVER_URL or MCP_SECRET_KEY environment variables.",
+    );
   }
 
   const llm = new Model({
@@ -68,8 +71,10 @@ export async function runInstruction(
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      const [error, messages] = await to(agent.run(userPrompt(
-        instruction, sender, groupMembers, ledgerId, messageIdId))
+      const [error, messages] = await to(
+        agent.run(
+          userPrompt(instruction, sender, groupMembers, ledgerId, messageIdId),
+        ),
       );
 
       if (error) {
@@ -78,7 +83,9 @@ export async function runInstruction(
       }
 
       if (messages && !(await guard.isValid(messages))) {
-        errorToThrow = new Error("This request did not pass the assertion from the guard chain.");
+        errorToThrow = new Error(
+          "This request did not pass the assertion from the guard chain.",
+        );
         continue;
       }
 

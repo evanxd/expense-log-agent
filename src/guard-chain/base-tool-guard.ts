@@ -10,8 +10,10 @@ export abstract class BaseToolGuard implements Guard {
   protected ADD_EXPENSE_TOOL_CALL_RESULT = "Expense added successfully.";
   protected DELETE_EXPENSE_TOOL_CALL_RESULT = "Expense deleted successfully.";
   protected GET_EXPENSE_TOOL_CALL_RESULT = "Expense retrieved successfully.";
-  protected GET_EXPENSE_CATEGORIES_TOOL_CALL_RESULT = "Expense categories retrieved successfully.";
-  protected GET_GROUPED_EXPENSES_TOOL_CALL_RESULT = "Grouped expenses retrieved successfully.";
+  protected GET_EXPENSE_CATEGORIES_TOOL_CALL_RESULT =
+    "Expense categories retrieved successfully.";
+  protected GET_GROUPED_EXPENSES_TOOL_CALL_RESULT =
+    "Grouped expenses retrieved successfully.";
 
   /**
    * The template method that extracts tool call results and delegates validation to subclasses.
@@ -40,8 +42,8 @@ export abstract class BaseToolGuard implements Guard {
   private getToolCallResults(messages: BaseMessage[]): Set<string> {
     return new Set(
       messages
-        .filter(m => m.getType() === "tool")
-        .map(m => JSON.parse(m.text).message)
+        .filter((m) => m.getType() === "tool")
+        .map((m) => JSON.parse(m.text).message),
     );
   }
 }
