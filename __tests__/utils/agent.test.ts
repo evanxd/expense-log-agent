@@ -17,7 +17,6 @@ jest.mock("swift-agent");
 jest.mock("../../src/guard-chain");
 jest.mock("../../src/utils/async");
 jest.mock("../../src/utils/prompts", () => ({
-  __esModule: true,
   userPrompt: jest.fn(),
   systemPrompt: "mocked system prompt",
 }));
