@@ -6,14 +6,11 @@ import prettierConfig from "eslint-config-prettier";
 
 export default [
   {
-    files: ["src/**/*.ts", "src/**/*.tsx"],
+    files: ["src/**/*.{ts,tsx}", "__tests__/**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        project: "./tsconfig.json",
-        tsconfigRootDir: new URL(".", import.meta.url).pathname,
+        ecmaVersion: 15,
       },
     },
     plugins: {
