@@ -9,8 +9,8 @@ import {
   ResultMessage,
 } from "../utils/types.js";
 
-const GET_EXPENSE_TOOL_NAME = "mcp__expense-log-mcp__getExpense";
-const DELETE_EXPENSE_TOOL_NAME = "mcp__expense-log-mcp__deleteExpense";
+const GET_EXPENSE_TOOL_NAME = "mcp__expense-log-mcp__get_expense";
+const DELETE_EXPENSE_TOOL_NAME = "mcp__expense-log-mcp__delete_expense";
 
 export class DeletionHandler implements RequestHandler {
   private agent: SwiftAgent;
@@ -36,25 +36,25 @@ export class DeletionHandler implements RequestHandler {
       (async () => {
         const { channelId, ledgerId, messageId, requestId } = request.message;
         const getExpenseResult = JSON.parse(
-          await getExpenseTool.invoke({ ledgerId, messageId }),
+          await getExpenseTool.invoke({
+            ledger_id: ledgerId,
+            message_id: messageId,
+          }),
         );
 
-        let result: ResultMessage = {
+        const result: ResultMessage = {
           message: { channelId, messageId, requestId },
         };
+
         if (getExpenseResult.success) {
           const deleteExpenseResult = JSON.parse(
-            await deleteExpenseTool.invoke({ ledgerId, messageId }),
+            await deleteExpenseTool.invoke({
+              ledger_id: ledgerId,
+              message_id: messageId,
+            }),
           );
           if (deleteExpenseResult.success) {
-            result = {
-              message: {
-                result: "Expense deleted successfully.",
-                channelId,
-                messageId,
-                requestId,
-              },
-            };
+            result.message.result = deleteExpenseResult.message;
           }
         }
 
