@@ -9,8 +9,8 @@ import {
   ResultMessage,
 } from "../utils/types.js";
 
-const GET_EXPENSE_TOOL_NAME = "mcp__expense-log-mcp__get_expense";
-const DELETE_EXPENSE_TOOL_NAME = "mcp__expense-log-mcp__delete_expense";
+const GET_EXPENSE_TOOL_NAME = "get_expense";
+const DELETE_EXPENSE_TOOL_NAME = "delete_expense";
 
 export class DeletionHandler implements RequestHandler {
   private agent: SwiftAgent;

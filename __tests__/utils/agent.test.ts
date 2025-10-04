@@ -78,6 +78,8 @@ describe("Agent Utils", () => {
               },
             },
           },
+          additionalToolNamePrefix: "",
+          prefixToolNameWithServerName: false,
         },
         systemPrompt: "mocked system prompt",
       });

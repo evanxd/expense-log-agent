@@ -36,6 +36,8 @@ export async function createAgent(): Promise<SwiftAgent> {
         },
       },
     },
+    additionalToolNamePrefix: "",
+    prefixToolNameWithServerName: false,
   };
 
   const agent = new SwiftAgent(llm, { mcp, systemPrompt });
