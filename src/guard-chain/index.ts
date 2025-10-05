@@ -1,6 +1,7 @@
 import { BaseMessage } from "@langchain/core/messages";
 
 import { AddExpenseTransactionGuard } from "./add-expense-transaction-guard.js";
+import { GetGroupedExpensesTransactionGuard } from "./get-grouped-expenses-transaction-guard.js";
 import { NoToolCallGuard } from "./no-tool-call-guard.js";
 import { SingleToolCallGuard } from "./single-tool-call-guard.js";
 import { Guard } from "./types.js";
@@ -15,6 +16,7 @@ export class GuardChain {
   constructor() {
     this.guards = [
       new AddExpenseTransactionGuard(),
+      new GetGroupedExpensesTransactionGuard(),
       new NoToolCallGuard(),
       new SingleToolCallGuard(),
     ];
