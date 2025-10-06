@@ -1,8 +1,8 @@
 import { RedisClientType } from "redis";
 import { SwiftAgent } from "swift-agent";
 
-import { GeneralCaseHandler } from "./general-case-handler.js";
-import { DeletionHandler } from "./deletion-handler.js";
+import { GeneralCaseHandler } from "./handlers/general-case-handler.js";
+import { DeletionHandler } from "./handlers/deletion-handler.js";
 
 export function createHandler(
   event: string,

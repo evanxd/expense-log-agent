@@ -1,13 +1,13 @@
 import { RedisClientType } from "redis";
 import { SwiftAgent } from "swift-agent";
 
-import { addResultToStream } from "../utils/redis.js";
-import { to } from "../utils/async.js";
+import { addResultToStream } from "../../utils/redis.js";
+import { to } from "../../utils/async.js";
 import {
   RequestHandler,
   RequestMessage,
   ResultMessage,
-} from "../utils/types.js";
+} from "../../utils/types.js";
 
 const GET_EXPENSE_TOOL_NAME = "get_expense";
 const DELETE_EXPENSE_TOOL_NAME = "delete_expense";
