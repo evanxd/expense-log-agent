@@ -1,7 +1,5 @@
 import { BaseMessage } from "@langchain/core/messages";
 
-import { Guard } from "./types.js";
-
 /**
  * An abstract base class for validators that operate on the results of tool usage.
  * It handles the boilerplate of extracting tool call results from the messages.
@@ -46,4 +44,12 @@ export abstract class BaseToolGuard implements Guard {
         .map((m) => JSON.parse(m.text).message),
     );
   }
+}
+
+/**
+ * A generic interface for validating a response from the LLM.
+ * The validate method can be synchronous or asynchronous.
+ */
+export interface Guard {
+  validate(messages: BaseMessage[]): Promise<boolean> | boolean;
 }

@@ -1,10 +1,10 @@
 import { BaseMessage } from "@langchain/core/messages";
 
-import { AddExpenseTransactionGuard } from "./add-expense-transaction-guard.js";
-import { GetGroupedExpensesTransactionGuard } from "./get-grouped-expenses-transaction-guard.js";
-import { NoToolCallGuard } from "./no-tool-call-guard.js";
-import { SingleToolCallGuard } from "./single-tool-call-guard.js";
-import { Guard } from "./types.js";
+import { AddExpenseTransactionGuard } from "./guards/add-expense-transaction-guard.js";
+import { GetGroupedExpensesTransactionGuard } from "./guards/get-grouped-expenses-transaction-guard.js";
+import { NoToolCallGuard } from "./guards/no-tool-call-guard.js";
+import { SingleToolCallGuard } from "./guards/single-tool-call-guard.js";
+import { Guard } from "./guards/base-tool-guard.js";
 
 /**
  * Main validator class that uses a set of strategies to validate LLM responses.
@@ -29,8 +29,8 @@ export class GuardChain {
    * @returns A promise that resolves to true if the tool call configuration is valid, false otherwise.
    */
   public async isValid(messages: BaseMessage[]): Promise<boolean> {
-    for (const validator of this.guards) {
-      if (await validator.validate(messages)) {
+    for (const guard of this.guards) {
+      if (await guard.validate(messages)) {
         return true;
       }
     }
