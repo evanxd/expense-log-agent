@@ -51,18 +51,20 @@ describe("DeletionHandler", () => {
   };
 
   beforeEach(() => {
-    (SwiftAgent as jest.Mock).mockClear();
-    mockGetTools.mockClear();
-    (addResultToStream as jest.Mock).mockClear();
-    mockGetExpenseTool.invoke.mockClear();
-    mockDeleteExpenseTool.invoke.mockClear();
-
     agent = new SwiftAgent({} as BaseChatModel);
     client = {} as RedisClientType;
 
     mockGetTools.mockResolvedValue([mockGetExpenseTool, mockDeleteExpenseTool]);
 
     deletionHandler = new DeletionHandler(agent, client);
+  });
+
+  afterEach(() => {
+    (SwiftAgent as jest.Mock).mockClear();
+    mockGetTools.mockClear();
+    (addResultToStream as jest.Mock).mockClear();
+    mockGetExpenseTool.invoke.mockClear();
+    mockDeleteExpenseTool.invoke.mockClear();
   });
 
   it("should do nothing if get_expense tool is not found", async () => {
