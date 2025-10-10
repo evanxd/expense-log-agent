@@ -29,6 +29,9 @@ export class GuardChain {
    * @returns A promise that resolves to true if the tool call configuration is valid, false otherwise.
    */
   public async isValid(messages: BaseMessage[]): Promise<boolean> {
+    if (messages.length === 0) {
+      return false;
+    }
     for (const guard of this.guards) {
       if (await guard.validate(messages)) {
         return true;
