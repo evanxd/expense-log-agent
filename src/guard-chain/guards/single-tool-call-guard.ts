@@ -19,9 +19,10 @@ export class SingleToolCallGuard extends BaseToolGuard {
     ).length;
 
     return (
-      deleteExpenseCount === 1 ||
-      getExpenseCount === 1 ||
-      getGroupedExpensesCount === 1
+      toolCallNames.length === 1 &&
+      (deleteExpenseCount === 1 ||
+        getExpenseCount === 1 ||
+        getGroupedExpensesCount === 1)
     );
   }
 }
